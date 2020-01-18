@@ -33,6 +33,7 @@ import com.github.piasy.biv.BigImageViewer;
 import com.github.piasy.biv.indicator.progresspie.ProgressPieIndicator;
 import com.github.piasy.biv.loader.glide.GlideImageLoader;
 import com.github.piasy.biv.view.BigImageView;
+import com.github.piasy.biv.view.GlideImageViewFactory;
 
 public class GlideLoaderActivity extends AppCompatActivity {
 
@@ -49,9 +50,10 @@ public class GlideLoaderActivity extends AppCompatActivity {
             public void onClick(View v) {
                 BigImageView bigImageView = findViewById(R.id.mBigImage);
                 bigImageView.setProgressIndicator(new ProgressPieIndicator());
+                bigImageView.setImageViewFactory(new GlideImageViewFactory());
                 bigImageView.showImage(
                         Uri.parse("http://img1.imgtn.bdimg.com/it/u=1520386803,778399414&fm=21&gp=0.jpg"),
-                        Uri.parse("http://youimg1.c-ctrip.com/target/tg/773/732/734/7ca19416b8cd423f8f6ef2d08366b7dc.jpg")
+                        Uri.parse("https://youimg1.c-ctrip.com/target/tg/773/732/734/7ca19416b8cd423f8f6ef2d08366b7dc.jpg")
                 );
             }
         });
@@ -62,9 +64,9 @@ public class GlideLoaderActivity extends AppCompatActivity {
         super.onDestroy();
 
         long start = System.nanoTime();
-        App.fixLeakCanary696(getApplicationContext());
+        Utils.fixLeakCanary696(getApplicationContext());
         long end = System.nanoTime();
-        Log.w(App.TAG, "fixLeakCanary696: " + (end - start));
+        Log.w(Utils.TAG, "fixLeakCanary696: " + (end - start));
 
         BigImageViewer.imageLoader().cancelAll();
     }
