@@ -11,6 +11,7 @@ View](https://github.com/davemorrissey/subsampling-scale-image-view),
 [Glide](https://github.com/bumptech/glide), and
 [Picasso](https://github.com/square/picasso). Even with gif and webp support!
 
+
 ## Demo
 
 ![memory usage](art/android_studio_memory_monitor.png)
@@ -34,22 +35,22 @@ allprojects {
     }
 }
 
-implementation 'com.github.piasy:BigImageViewer:1.6.2'
+implementation 'com.github.piasy:BigImageViewer:1.5.7'
 
 // load with fresco
-implementation 'com.github.piasy:FrescoImageLoader:1.6.2'
+implementation 'com.github.piasy:FrescoImageLoader:1.5.7'
 
 // load with glide
-implementation 'com.github.piasy:GlideImageLoader:1.6.2'
+implementation 'com.github.piasy:GlideImageLoader:1.5.7'
 
 // progress pie indicator
-implementation 'com.github.piasy:ProgressPieIndicator:1.6.2'
+implementation 'com.github.piasy:ProgressPieIndicator:1.5.7'
 
 // support thumbnail, gif and webp with Fresco
-implementation 'com.github.piasy:FrescoImageViewFactory:1.6.2'
+implementation 'com.github.piasy:FrescoImageViewFactory:1.5.7'
 
 // support thumbnail and gif with Glide
-implementation 'com.github.piasy:GlideImageViewFactory:1.6.2'
+implementation 'com.github.piasy:GlideImageViewFactory:1.5.7'
 ```
 
 ### Initialize
@@ -83,7 +84,7 @@ BigImageViewer.initialize(GlideCustomImageLoader.with(appContext, CustomComponen
 ```
 
 You can disable display optimization using `optimizeDisplay` attribute, or
-`BigImageView.setOptimizeDisplay(false)`, which will disable animation for long
+`BigImageView.setOptimizeDisplay(false)`. Which will disable animation for long
 image, and the switch between thumbnail and origin image.
 
 ### Show the image
@@ -91,7 +92,12 @@ image, and the switch between thumbnail and origin image.
 ``` java
 BigImageView bigImageView = (BigImageView) findViewById(R.id.mBigImage);
 bigImageView.showImage(Uri.parse(url));
+
+// Or show a thumbnail before the big image is loaded
+bigImageView.showImage(Uri.parse(thumbnail), Uri.parse(url));
 ```
+
+Note: since 1.5.0, to show thumbnail image, you need call `setImageViewFactory`, see details below.
 
 ## Usage
 
@@ -112,29 +118,11 @@ biv.setImageViewFactory(new FrescoImageViewFactory());
 biv.setImageViewFactory(new GlideImageViewFactory());
 ```
 
+To clean up code, we move thumbnail view creation from `ImageLoader` into `ImageViewFactory`,
+so to display thumbnail, you also need set an `ImageViewFactory`.
+
 Node: if the image is not gif or animated webp, then it will be displayed by SSIV,
 the image type is not determined by its file extension, but by its file header magic code.
-
-### Thumbnail support
-
-To show a thumbnail before the big image is loaded, you can call below version of `showImage`:
-
-``` java
-bigImageView.showImage(Uri.parse(thumbnail), Uri.parse(url));
-```
-
-Note: make sure that you have already called `setImageViewFactory`.
-
-### Shared element transition support (experimental)
-
-Since 1.6.0, BIV has experimental support for shared element transition,
-but it has following known issues:
-
-+ The shared image may flicker during enter transition, or become white after return transition,
-when using Fresco, see [Fresco issue #1445](https://github.com/facebook/fresco/issues/1445);
-+ The shared image may flicker after return transition, especially after you zoomed SSIV;
-
-You can play with the demo app to evaluate the shared element transition support.
 
 ### Download progress indicator
 
@@ -340,30 +328,10 @@ For more detailed example, please refer to [the example project](https://github.
 + When you want load local image file, you can create the Uri via
 `Uri.fromFile`, but the path will be url encoded, and may cause the image loader
 fail to load it, consider using `Uri.parse("file://" + file.getAbsolutePath())`.
-+ When using with RecyclerView or ViewPager, the recycled BIV doesn't know
-it should clear the loaded image or reload the image,
++ When using with ReceyclerView, the recycled BIV doesn't know it should clear the loaded image,
 so you need manually notify it in some way,
-see [issue 107](https://github.com/Piasy/BigImageViewer/issues/107),
-and [issue 177](https://github.com/Piasy/BigImageViewer/issues/177).
-+ Crash on Android 4.x device? You could force gradle to use a specific version of OkHttp (some version earlier than 3.13.0), by adding this block to your module's build.gradle, please note that it should be added at the top level, not inside any other block:
+see [issue 107](https://github.com/Piasy/BigImageViewer/issues/107).
 
-    ```gradle
-
-    configurations {
-      all {
-        resolutionStrategy {
-          eachDependency { DependencyResolveDetails details ->
-            if (details.requested.group == 'com.squareup.okhttp3' &&
-                details.requested.name ==
-                'okhttp') {
-              // OkHttp drops support before 5.0 since 3.13.0
-              details.useVersion '3.12.6'
-            }
-          }
-        }
-      }
-    }
-    ```
 
 ## Why another big image viewer?
 
@@ -386,6 +354,7 @@ If you are interested in how does this library work, you can refer to [this
 issue](https://github.com/Piasy/BigImageViewer/issues/8), and [Subsampling Scale
 Image View](https://github.com/davemorrissey/subsampling-scale-image-view).
 
+
 ## Performance
 
 Memory usage of different libraries:
@@ -393,6 +362,7 @@ Memory usage of different libraries:
 | \- | PhotoDraweeView | FrescoImageViewer | BigImageViewer |
 | ------| ------ | ------ | ------ |
 | 4135\*5134 | 80MB | 80MB | 2~20 MB |
+
 
 ## Todo
 

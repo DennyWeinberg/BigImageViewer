@@ -22,10 +22,7 @@
  * SOFTWARE.
  */
 
-include(':app')
-include(':BigImageViewer')
-include(':FrescoImageLoader')
-include(':GlideImageLoader')
-include(':FrescoImageViewFactory')
-include(':GlideImageViewFactory')
-include(':ProgressPieIndicator')
+include ':app', ':BigImageViewer', 
+        ':FrescoImageLoader', ':GlideImageLoader',
+        ':FrescoImageViewFactory', ':GlideImageViewFactory',
+        ':ProgressPieIndicator'
